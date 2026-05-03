@@ -39,7 +39,7 @@ button:hover{
 /* ===nav bar and header ===  */
 .site-header{
     border-bottom: 1px solid #d0d0d0;
-    background-color: blue;
+    background: linear-gradient(135deg, blue 50%,white 2%, red 45%);
     padding: 5px;
     position: sticky;
     top: 0;
@@ -73,7 +73,7 @@ button:hover{
     transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 .navlinks a:hover{
-    background-color: red;
+    background-color: blue;
     color: #fff;
     padding: 5px;
     border-radius: 10px;
