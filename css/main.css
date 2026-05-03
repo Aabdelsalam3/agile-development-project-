@@ -10,11 +10,12 @@ body {
     height: 100vh;
     font-family: Arial, Helvetica, sans-serif;
     color: #222;
+    background-color: whitesmoke;
 }
 
 a{
     text-decoration: none;
-    color: #7b5ce1;
+    color: white;
     transition: color 0.3s ease;
 }
 a:hover{
@@ -23,7 +24,7 @@ a:hover{
 button{
     border: none;
     border-radius: 30px;
-    background-color: #9b7cf6;
+    background-color: red;
     color: white;
     font-size: 16px;
     cursor: pointer;
@@ -31,14 +32,14 @@ button{
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 button:hover{
-    background-color: #5407ef;
+    background-color: blue;
     transform: translateY(-2px);
 }
 
 /* ===nav bar and header ===  */
 .site-header{
     border-bottom: 1px solid #d0d0d0;
-    background-color: rgba(198, 204, 183, 0.606);
+    background: linear-gradient(135deg, blue 50%,white 2%, red 45%);
     padding: 5px;
     position: sticky;
     top: 0;
@@ -72,7 +73,7 @@ button:hover{
     transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 .navlinks a:hover{
-    background-color: #5407ef;
+    background-color: blue;
     color: #fff;
     padding: 5px;
     border-radius: 10px;
