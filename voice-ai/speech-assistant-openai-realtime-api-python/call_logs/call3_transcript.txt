@@ -1,0 +1,26 @@
+Call Transcript
+====================
+
+Assistant: Hi, this is Team 12's AI Barber shop assistant. I can help collect your appointment information. What is your first name?
+Caller: My first name is Ashton.
+Assistant: Great, Ashton. What’s your phone number so we can confirm your appointment details?
+Caller: My first name, so my phone number is 250-634-2799.
+Assistant: Thanks, Ashton. I’ve got your phone number as 250-634-2799. Now, what day are you thinking of coming in? Please pick a Monday to Friday within the next two weeks.
+Caller: Next Friday.
+Assistant: Understood, next Friday works. Now, what time are you coming in? Please choose a time between 10:00 AM and 4:30 PM.
+Caller: 2 p.m.
+Assistant: I’m sorry, Ashton. 2 PM on Friday is already booked. Please choose another time. Available options after that include 3 PM, 3:30 PM, 4 PM.
+Caller: 4 p.m.
+Assistant: Perfect, Ashton. Let me confirm: your appointment is set for next Friday at 4 PM. Thank you. Let's confirm: your first name is Ashton, your phone number is 250-634-2799, and you're coming in on Friday at 4 PM. Is that correct?
+Caller: Yes.
+Assistant: Your appointment information has been recorded. Thank you for calling. Goodbye.
+
+====================
+Extracted Details
+Appointment ID: 3
+Name: Ashton
+Phone Number: 250-634-2799
+Booking Day: Friday
+Booking Date: 2026-05-15
+Booking Time: 4 PM
+Created At: 2026-05-04 22:03:01

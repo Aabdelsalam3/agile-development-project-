@@ -1,0 +1,28 @@
+Call Transcript
+====================
+
+Assistant: Hi, this is Team 12's AI Barber shop assistant. I can help collect your appointment information. What is your first name?
+Caller: My first name is James.
+Assistant: What is your phone number?
+Caller: 320-465-8231
+Assistant: Thanks, James. What day are you coming in? Please choose Monday to Friday within the next two weeks.
+Caller: May 15th.
+Assistant: Got it, May 15th. Now, what time are you coming in? Please choose a time between 10:00 AM and 4:30 PM.
+Caller: 2 p.m.
+Assistant: 2 PM on Friday is already booked. Please choose another time. Available options after that include 3:30 PM, 4:30 PM.
+Caller: 3:30 p.m.
+Assistant: Thank you. Let's confirm: your first name is James, your phone number is 320-465-8231, and you're coming in on Friday at 3:30 PM. Is that correct?
+Caller: Ja.
+Assistant: Perfect! Your appointment is confirmed. We look forward to seeing you on Friday at 3:30 PM. If you need to make any changes, just let us know. Thanks, James!
+Caller: Perfect.
+Assistant: Your appointment information has been recorded. Thank you for calling. Goodbye.
+
+====================
+Extracted Details
+Appointment ID: 5
+Name: James
+Phone Number: 320-465-8231
+Booking Day: Friday
+Booking Date: 2026-05-15
+Booking Time: 3:30 PM
+Created At: 2026-05-06 00:12:58
