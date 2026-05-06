@@ -1,21 +1,30 @@
-const http = require("node:http");
-const fs = require("fs/promises");
 const express = require("express");
+const sqlite3 = require("sqlite3").verbose();
+const path = require("path");
 
-const app = http.createServer(async (req, res) => {
-  let content;
+const app = express();
+const port = 3000;
 
-  if (req.url === "/") {
-    content = await fs.readFile("index.html", "utf-8");
-  } else if (req.url === "/contact") {
-    content = await fs.readFile("contact.html", "utf-8");
-  } else {
-    content = "<h1>This is some html</h1>";
-  }
-
-  res.end(content);
+const db = new sqlite3.Database("./appointments.db", (err) => {
+    if (err) return console.error(err.message);
+    console.log("Connected to appointments.db");
 });
 
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
+
+app.use(express.static("public"));
+
+
+app.get("/api/appointments", (req, res) => {
+    const sql = "SELECT * FROM appointments";
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(rows);
+    });
+});
+
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
