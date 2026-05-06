@@ -2,17 +2,60 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Appointment Calendar</title>
-    <style>
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
-        .day-cell { border: 1px solid #ccc; padding: 10px; min-height: 100px; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
+    <title>Home</title>
 </head>
 <body>
-    <h1>Appointment Calendar</h1>
-    <div id="calendar" class="calendar-grid"></div>
+    <header class="site-header">
+        <nav class="navbar">
+            <a href="index.html" class="logo"> LOGO</a>
 
+            <ul class="navlinks">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="#">Signup</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+    <section style="max-width: 1100px; margin: 20px auto; padding: 0 28px;">
+        <h2>Scheduled Appointments</h2>
+        <div id="appointment-list" class="appointment-grid"></div>
+    </section>
+</main>
+
+<script src="js/calendar.js"></script>
+
+    <footer class="site-footer">
+    <div class="footer-container">
+
+        <p class="footer-copy">
+            © 2026 MyApp. All rights reserved.
+        </p>
+
+        <ul class="footer-links">
+            <li>
+                <a href="#">
+                    <i class="fa-brands fa-youtube"></i>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa-brands fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa-brands fa-twitter"></i>
+                </a>
+            </li>
+        </ul>
+
+    </div>
+</footer>
     
-    <script src="calendar.js"></script>
 </body>
 </html>
