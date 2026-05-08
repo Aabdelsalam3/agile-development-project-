@@ -5,8 +5,13 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+<<<<<<< HEAD
     "test": "vitest",
     "test:watch": "vitest --watch"
+=======
+    "test1": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest"
+>>>>>>> 6235bbde54cb78a57767c2259b47093214f2ffec
   },
   "repository": {
     "type": "git",
