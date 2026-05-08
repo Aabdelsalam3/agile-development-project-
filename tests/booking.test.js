@@ -1,6 +1,6 @@
-const { describe, it, expect, beforeEach } = require("vitest");
+import { describe, it, expect, beforeEach } from "vitest";
 
-const {
+import {
   createBooking,
   getBookingById,
   getDailyBookings,
@@ -8,12 +8,10 @@ const {
   cancelBooking,
   deleteBooking,
   resetBookings,
-} = require("./booking");
-
+} from "./booking.js";
 beforeEach(() => {
   resetBookings();
 });
-
 describe("Create booking", () => {
   it("should not create a booking if a required field is missing", () => {
     expect(() => {
