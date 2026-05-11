@@ -3,59 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/5c1bbe2411.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/main.css">
-    <title>Home</title>
+    <title>AI Barbershop Calendar</title>
 </head>
 <body>
     <header class="site-header">
-        <nav class="navbar">
-            <a href="index.html" class="logo"> Barbershop bookings</a>
-
-            <ul class="navlinks">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About Us</a></li>
-                <li><a href="login.html">Login</a></li>
-                <li><a href="#">Signup</a></li>
-            </ul>
-        </nav>
+        <div class="header-content">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fa-solid fa-scissors"></i></div>
+                <div class="title-container">
+                    <h1>AI Barbershop Appointment Calendar</h1>
+                    <p class="breadcrumbs">Calendar overview &rarr; Day detail &rarr; Booking details</p>
+                </div>
+            </div>
+            <div class="user-actions" id="user-nav">
+                </div>
+        </div>
     </header>
 
-    <main>
-    <section style="max-width: 1100px; margin: 20px auto; padding: 0 28px;">
-        <h2>Scheduled Appointments</h2>
-        <div id="appointment-list" class="appointment-grid"></div>
-    </section>
-</main>
+    <main class="dashboard-container">
+        <section class="stats-row">
+            <div class="stat-card">
+                <h2 id="total-bookings" class="stat-number">0</h2>
+                <p class="stat-label">Total bookings</p>
+            </div>
+            <div class="stat-card">
+                <h2 id="booked-days" class="stat-number">0</h2>
+                <p class="stat-label">Booked days</p>
+            </div>
+            <div class="stat-card">
+                <h2 id="selected-day-bookings" class="stat-number">0</h2>
+                <p class="stat-label">Selected day bookings</p>
+            </div>
+        </section>
 
-<script src="js/calendar.js"></script>
+        <section class="layout-grid">
+            <div class="calendar-card">
+                <div class="calendar-header">
+                    <h2 id="current-month-year">Month Year</h2>
+                    <div class="calendar-controls">
+                        <button id="prev-month" class="icon-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button id="today-btn" class="text-btn">Today</button>
+                        <button id="next-month" class="icon-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                
+                <div class="calendar-grid-header">
+                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                </div>
+                <div id="calendar-days" class="calendar-grid">
+                    </div>
+            </div>
 
-    <footer class="site-footer">
-    <div class="footer-container">
+            <div class="detail-card">
+                <div class="detail-header">
+                    <h2 id="detail-date-title">Select a Date</h2>
+                    <p id="detail-count" class="detail-subtitle">0 bookings</p>
+                </div>
+                <div id="appointment-list" class="appointment-list">
+                    <div class="empty-state">Loading appointments...</div>
+                </div>
+            </div>
+        </section>
+    </main>
 
-        <p class="footer-copy">
-            © 2026 MyApp. All rights reserved.
-        </p>
-
-        <ul class="footer-links">
-            <li>
-                <a href="#">
-                    <i class="fa-brands fa-youtube"></i>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i class="fa-brands fa-facebook"></i>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i class="fa-brands fa-twitter"></i>
-                </a>
-            </li>
-        </ul>
-
-    </div>
-</footer>
-    
+    <script src="js/calendar.js"></script>
 </body>
 </html>

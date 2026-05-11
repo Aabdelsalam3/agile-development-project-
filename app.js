@@ -80,6 +80,18 @@ db.serialize(() => {
         )
     `);
 
+    // Ensure appointments table exists for the frontend to query
+    db.run(`
+        CREATE TABLE IF NOT EXISTS appointments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            booking_date TEXT NOT NULL,
+            booking_day TEXT NOT NULL,
+            booking_time TEXT NOT NULL,
+            phone_number TEXT NOT NULL
+        )
+    `);
+
     const demoEmail = "nick@gmail.com";
     const demoPassword = "money";
 
@@ -123,11 +135,14 @@ db.serialize(() => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 app.use(express.static("public"));
 
 app.get(["/login", "/login.html"], (req, res) => {
-    res.sendFile(path.join(__dirname, "login.html"));
+    res.sendFile(path.join(__dirname, "public", "login.html"));
+});
+
+app.get(["/", "/index.html"], (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 app.post("/api/login", (req, res) => {
@@ -181,7 +196,6 @@ app.get("/api/me", (req, res) => {
         res.status(401).json({ error: "Not logged in" });
         return;
     }
-
     res.json({ user: auth.session.user });
 });
 
@@ -190,14 +204,12 @@ app.post("/api/logout", (req, res) => {
     if (auth) {
         sessions.delete(auth.sessionId);
     }
-
     res.setHeader(
         "Set-Cookie",
         `${SESSION_COOKIE_NAME}=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax`
     );
     res.json({ message: "Logged out" });
 });
-
 
 app.get("/api/appointments", requireAuth, (req, res) => {
     const sql = "SELECT * FROM appointments";

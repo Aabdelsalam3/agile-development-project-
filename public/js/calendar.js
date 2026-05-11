@@ -1,24 +1,13 @@
-const getDisplayName = (email) => {
-    if (!email) return 'User';
-    return email.split('@')[0];
-};
+let appointmentsData = [];
+let currentDate = new Date(); // Context: May 2026 based on prompt, but dynamic
+let selectedDate = new Date();
 
 const renderUserNav = (email) => {
-    const nav = document.querySelector('.navlinks');
+    const nav = document.getElementById('user-nav');
     if (!nav) return;
-
-    const displayName = getDisplayName(email);
-    nav.innerHTML = `
-        <li><a href="/index.html">Home</a></li>
-        <li><a href="#">About Us</a></li>
-        <li><span class="welcome-user">Welcome ${displayName}</span></li>
-        <li><button type="button" id="logout-btn" class="logout-btn">Logout</button></li>
-    `;
-
-    const logoutButton = document.getElementById('logout-btn');
-    if (!logoutButton) return;
-
-    logoutButton.addEventListener('click', async () => {
+    nav.innerHTML = `<button type="button" id="logout-btn" class="logout-btn">Logout</button>`;
+    
+    document.getElementById('logout-btn').addEventListener('click', async () => {
         await fetch('/api/logout', { method: 'POST' });
         window.location.href = '/login.html';
     });
@@ -30,14 +19,142 @@ const requireSession = async () => {
         window.location.href = '/login.html';
         return null;
     }
-
     const me = await meResponse.json();
     renderUserNav(me.user?.email);
     return me.user;
 };
 
-async function loadCalendar() {
-    const container = document.getElementById('appointment-list');
+// Map raw data into an object grouped by Date String (YYYY-MM-DD)
+const processAppointments = (rawData) => {
+    const map = {};
+    rawData.forEach(app => {
+        // Assuming booking_date is format 'YYYY-MM-DD' or similar parsable string
+        // If your DB has varying formats, this ensures we map it to standard ISO date keys
+        const d = new Date(app.booking_date);
+        if(isNaN(d)) return; // skip invalid dates
+        
+        const dateStr = d.toISOString().split('T')[0];
+        if (!map[dateStr]) map[dateStr] = [];
+        map[dateStr].push(app);
+    });
+    return map;
+};
+
+const updateStats = (groupedData, currentSelectedDateStr) => {
+    document.getElementById('total-bookings').innerText = appointmentsData.length;
+    document.getElementById('booked-days').innerText = Object.keys(groupedData).length;
+    
+    const selectedCount = groupedData[currentSelectedDateStr] ? groupedData[currentSelectedDateStr].length : 0;
+    document.getElementById('selected-day-bookings').innerText = selectedCount;
+};
+
+const renderCalendar = (groupedData) => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    
+    // Update Header
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    document.getElementById('current-month-year').innerText = `${monthNames[month]} ${year}`;
+    
+    const daysContainer = document.getElementById('calendar-days');
+    daysContainer.innerHTML = '';
+    
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    // Pad empty days at start
+    for (let i = 0; i < firstDay; i++) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'calendar-day empty';
+        daysContainer.appendChild(emptyDiv);
+    }
+    
+    const selectedDateStr = selectedDate.toISOString().split('T')[0];
+
+    // Create days
+    for (let day = 1; day <= daysInMonth; day++) {
+        const d = new Date(year, month, day);
+        // Correct for timezone offset when generating key
+        const localDateStr = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+        
+        const dayDiv = document.createElement('div');
+        dayDiv.className = `calendar-day ${localDateStr === selectedDateStr ? 'selected' : ''}`;
+        
+        let innerHTML = `<span class="day-number">${day}</span>`;
+        
+        if (groupedData[localDateStr]) {
+            const count = groupedData[localDateStr].length;
+            innerHTML += `<span class="booking-badge">${count} booking${count > 1 ? 's' : ''}</span>`;
+        }
+        
+        dayDiv.innerHTML = innerHTML;
+        
+        dayDiv.addEventListener('click', () => {
+            selectedDate = new Date(year, month, day);
+            renderCalendar(groupedData); // Re-render to update selected border
+            renderDetailPanel(groupedData, localDateStr);
+            updateStats(groupedData, localDateStr);
+        });
+        
+        daysContainer.appendChild(dayDiv);
+    }
+};
+
+const renderDetailPanel = (groupedData, dateStr) => {
+    const detailTitle = document.getElementById('detail-date-title');
+    const detailCount = document.getElementById('detail-count');
+    const listContainer = document.getElementById('appointment-list');
+    
+    // Format date nicely (e.g. Wednesday, May 06, 2026)
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: '2-digit' };
+    const dateObj = new Date(dateStr + "T00:00:00"); // Force local by appending time
+    detailTitle.innerText = dateObj.toLocaleDateString(undefined, options);
+    
+    const dayAppointments = groupedData[dateStr] || [];
+    detailCount.innerText = `${dayAppointments.length} booking${dayAppointments.length !== 1 ? 's' : ''}`;
+    
+    if (dayAppointments.length === 0) {
+        listContainer.innerHTML = `<div class="empty-state">No bookings for this day.</div>`;
+        return;
+    }
+    
+    listContainer.innerHTML = '';
+    dayAppointments.forEach(app => {
+        const item = document.createElement('div');
+        item.className = 'appointment-item';
+        item.innerHTML = `
+            <h4>${app.name}</h4>
+            <div class="appointment-details">
+                <span class="appointment-time"><i class="fa-regular fa-clock"></i> ${app.booking_time}</span>
+                <span><i class="fa-solid fa-phone"></i> ${app.phone_number}</span>
+            </div>
+        `;
+        listContainer.appendChild(item);
+    });
+};
+
+const setupControls = (groupedData) => {
+    document.getElementById('prev-month').addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar(groupedData);
+    });
+    
+    document.getElementById('next-month').addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar(groupedData);
+    });
+    
+    document.getElementById('today-btn').addEventListener('click', () => {
+        currentDate = new Date();
+        selectedDate = new Date();
+        const localSelected = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+        renderCalendar(groupedData);
+        renderDetailPanel(groupedData, localSelected);
+        updateStats(groupedData, localSelected);
+    });
+};
+
+async function initDashboard() {
     const user = await requireSession();
     if (!user) return;
 
@@ -48,29 +165,20 @@ async function loadCalendar() {
     }
 
     if (!response.ok) {
-        container.innerHTML = '<p>Unable to load appointments right now.</p>';
+        document.getElementById('appointment-list').innerHTML = '<div class="empty-state">Failed to load API.</div>';
         return;
     }
 
-    const appointments = await response.json();
+    appointmentsData = await response.json();
+    const groupedData = processAppointments(appointmentsData);
+    
+    // Set initial selected date key
+    const initialSelectedStr = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
 
-    container.innerHTML = '';
-
-    appointments.forEach(app => {
-        const div = document.createElement('div');
-
-        div.style = "background: white; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 5px solid blue; color: #222;";
-
-        div.innerHTML = `
-            <strong style="font-size: 1.2em;">${app.name}</strong>
-            <div style="margin-top: 8px;">
-                <strong>Date:</strong> ${app.booking_date} (${app.booking_day})
-                <br><strong>Time:</strong> <span style="color: blue;">${app.booking_time}</span>
-                <br><small style="color: #666;">Phone: ${app.phone_number}</small>
-            </div>
-        `;
-        container.appendChild(div);
-    });
+    setupControls(groupedData);
+    renderCalendar(groupedData);
+    renderDetailPanel(groupedData, initialSelectedStr);
+    updateStats(groupedData, initialSelectedStr);
 }
 
-loadCalendar();
+initDashboard();
