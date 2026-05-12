@@ -58,8 +58,11 @@
 
             <div class="detail-card">
                 <div class="detail-header">
-                    <h2 id="detail-date-title">Select a Date</h2>
-                    <p id="detail-count" class="detail-subtitle">0 bookings</p>
+                    <div class="detail-header-text">
+                        <h2 id="detail-date-title">Select a Date</h2>
+                        <p id="detail-count" class="detail-subtitle">0 bookings</p>
+                    </div>
+                    <button id="add-btn" class="btn-primary small-btn">+ Add Booking</button>
                 </div>
                 <div id="appointment-list" class="appointment-list">
                     <div class="empty-state">Loading appointments...</div>
@@ -67,6 +70,35 @@
             </div>
         </section>
     </main>
+
+    <div id="appointment-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add New Appointment</h2>
+                <button id="close-modal" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="appointment-form">
+                <input type="hidden" id="app-id">
+                <div class="input-group">
+                    <label for="app-name">Client Name</label>
+                    <input type="text" id="app-name" required placeholder="e.g. John Doe">
+                </div>
+                <div class="input-group">
+                    <label for="app-date">Date</label>
+                    <input type="date" id="app-date" required>
+                </div>
+                <div class="input-group">
+                    <label for="app-time">Time</label>
+                    <input type="time" id="app-time" required>
+                </div>
+                <div class="input-group">
+                    <label for="app-phone">Phone Number</label>
+                    <input type="tel" id="app-phone" required placeholder="e.g. 555-0198">
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 10px;">Save Appointment</button>
+            </form>
+        </div>
+    </div>
 
     <script src="js/calendar.js"></script>
 </body>

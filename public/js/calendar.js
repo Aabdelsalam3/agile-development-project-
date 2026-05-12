@@ -1,7 +1,8 @@
 let appointmentsData = [];
-let currentDate = new Date(); // Context: May 2026 based on prompt, but dynamic
+let currentDate = new Date(); 
 let selectedDate = new Date();
 
+// --- Auth & Setup ---
 const renderUserNav = (email) => {
     const nav = document.getElementById('user-nav');
     if (!nav) return;
@@ -24,14 +25,12 @@ const requireSession = async () => {
     return me.user;
 };
 
-// Map raw data into an object grouped by Date String (YYYY-MM-DD)
+// --- Data Processing ---
 const processAppointments = (rawData) => {
     const map = {};
     rawData.forEach(app => {
-        // Assuming booking_date is format 'YYYY-MM-DD' or similar parsable string
-        // If your DB has varying formats, this ensures we map it to standard ISO date keys
         const d = new Date(app.booking_date);
-        if(isNaN(d)) return; // skip invalid dates
+        if(isNaN(d)) return;
         
         const dateStr = d.toISOString().split('T')[0];
         if (!map[dateStr]) map[dateStr] = [];
@@ -48,11 +47,11 @@ const updateStats = (groupedData, currentSelectedDateStr) => {
     document.getElementById('selected-day-bookings').innerText = selectedCount;
 };
 
+// --- UI Rendering ---
 const renderCalendar = (groupedData) => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     
-    // Update Header
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     document.getElementById('current-month-year').innerText = `${monthNames[month]} ${year}`;
     
@@ -62,19 +61,16 @@ const renderCalendar = (groupedData) => {
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     
-    // Pad empty days at start
     for (let i = 0; i < firstDay; i++) {
         const emptyDiv = document.createElement('div');
         emptyDiv.className = 'calendar-day empty';
         daysContainer.appendChild(emptyDiv);
     }
     
-    const selectedDateStr = selectedDate.toISOString().split('T')[0];
+    const selectedDateStr = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
 
-    // Create days
     for (let day = 1; day <= daysInMonth; day++) {
         const d = new Date(year, month, day);
-        // Correct for timezone offset when generating key
         const localDateStr = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
         
         const dayDiv = document.createElement('div');
@@ -91,7 +87,7 @@ const renderCalendar = (groupedData) => {
         
         dayDiv.addEventListener('click', () => {
             selectedDate = new Date(year, month, day);
-            renderCalendar(groupedData); // Re-render to update selected border
+            renderCalendar(groupedData);
             renderDetailPanel(groupedData, localDateStr);
             updateStats(groupedData, localDateStr);
         });
@@ -105,9 +101,8 @@ const renderDetailPanel = (groupedData, dateStr) => {
     const detailCount = document.getElementById('detail-count');
     const listContainer = document.getElementById('appointment-list');
     
-    // Format date nicely (e.g. Wednesday, May 06, 2026)
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: '2-digit' };
-    const dateObj = new Date(dateStr + "T00:00:00"); // Force local by appending time
+    const dateObj = new Date(dateStr + "T00:00:00"); 
     detailTitle.innerText = dateObj.toLocaleDateString(undefined, options);
     
     const dayAppointments = groupedData[dateStr] || [];
@@ -128,57 +123,135 @@ const renderDetailPanel = (groupedData, dateStr) => {
                 <span class="appointment-time"><i class="fa-regular fa-clock"></i> ${app.booking_time}</span>
                 <span><i class="fa-solid fa-phone"></i> ${app.phone_number}</span>
             </div>
+            <div class="appointment-actions">
+                <button class="action-btn edit" onclick="openModalForEdit(${app.id})"><i class="fa-solid fa-pen"></i></button>
+                <button class="action-btn delete" onclick="deleteAppointment(${app.id})"><i class="fa-solid fa-trash"></i></button>
+            </div>
         `;
         listContainer.appendChild(item);
     });
 };
 
-const setupControls = (groupedData) => {
+// --- CRUD Operations ---
+
+// Fetch data from DB and refresh UI
+const loadAndRenderData = async () => {
+    const response = await fetch('/api/appointments');
+    if (!response.ok) return;
+    
+    appointmentsData = await response.json();
+    const groupedData = processAppointments(appointmentsData);
+    const selectedDateStr = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+    
+    renderCalendar(groupedData);
+    renderDetailPanel(groupedData, selectedDateStr);
+    updateStats(groupedData, selectedDateStr);
+};
+
+// Delete Appointment
+window.deleteAppointment = async (id) => {
+    if(!confirm("Are you sure you want to delete this appointment?")) return;
+    
+    await fetch(`/api/appointments/${id}`, { method: 'DELETE' });
+    loadAndRenderData(); // Refresh UI
+};
+
+// --- Modal Logic ---
+const modal = document.getElementById('appointment-modal');
+const form = document.getElementById('appointment-form');
+
+const openModal = () => {
+    modal.classList.remove('hidden');
+};
+
+const closeModal = () => {
+    modal.classList.add('hidden');
+    form.reset();
+    document.getElementById('app-id').value = '';
+};
+
+// Setup Add New
+document.getElementById('add-btn').addEventListener('click', () => {
+    document.getElementById('modal-title').innerText = "Add New Appointment";
+    // Pre-fill the date picker with the currently selected date
+    const selectedDateStr = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+    document.getElementById('app-date').value = selectedDateStr;
+    openModal();
+});
+
+// Setup Edit
+window.openModalForEdit = (id) => {
+    const app = appointmentsData.find(a => a.id === id);
+    if (!app) return;
+    
+    document.getElementById('modal-title').innerText = "Edit Appointment";
+    document.getElementById('app-id').value = app.id;
+    document.getElementById('app-name').value = app.name;
+    document.getElementById('app-date').value = app.booking_date;
+    document.getElementById('app-time').value = app.booking_time;
+    document.getElementById('app-phone').value = app.phone_number;
+    
+    openModal();
+};
+
+document.getElementById('close-modal').addEventListener('click', closeModal);
+
+// Handle Form Submit (Create or Update)
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const id = document.getElementById('app-id').value;
+    const isEditing = !!id;
+    
+    const dateVal = document.getElementById('app-date').value;
+    const dateObj = new Date(dateVal + "T00:00:00");
+    const dayName = dateObj.toLocaleDateString(undefined, { weekday: 'long' });
+
+    const payload = {
+        name: document.getElementById('app-name').value,
+        booking_date: dateVal,
+        booking_day: dayName,
+        booking_time: document.getElementById('app-time').value,
+        phone_number: document.getElementById('app-phone').value
+    };
+
+    const url = isEditing ? `/api/appointments/${id}` : '/api/appointments';
+    const method = isEditing ? 'PUT' : 'POST';
+
+    await fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+
+    closeModal();
+    loadAndRenderData(); // Refresh UI
+});
+
+// --- Initialization ---
+const setupControls = () => {
     document.getElementById('prev-month').addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar(groupedData);
+        loadAndRenderData();
     });
     
     document.getElementById('next-month').addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar(groupedData);
+        loadAndRenderData();
     });
     
     document.getElementById('today-btn').addEventListener('click', () => {
         currentDate = new Date();
         selectedDate = new Date();
-        const localSelected = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
-        renderCalendar(groupedData);
-        renderDetailPanel(groupedData, localSelected);
-        updateStats(groupedData, localSelected);
+        loadAndRenderData();
     });
 };
 
 async function initDashboard() {
     const user = await requireSession();
     if (!user) return;
-
-    const response = await fetch('/api/appointments');
-    if (response.status === 401) {
-        window.location.href = '/login.html';
-        return;
-    }
-
-    if (!response.ok) {
-        document.getElementById('appointment-list').innerHTML = '<div class="empty-state">Failed to load API.</div>';
-        return;
-    }
-
-    appointmentsData = await response.json();
-    const groupedData = processAppointments(appointmentsData);
-    
-    // Set initial selected date key
-    const initialSelectedStr = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
-
-    setupControls(groupedData);
-    renderCalendar(groupedData);
-    renderDetailPanel(groupedData, initialSelectedStr);
-    updateStats(groupedData, initialSelectedStr);
+    setupControls();
+    loadAndRenderData();
 }
 
 initDashboard();
