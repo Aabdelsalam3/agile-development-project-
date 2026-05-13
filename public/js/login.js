@@ -18,7 +18,7 @@ const checkExistingSession = async () => {
             redirectToHome();
         }
     } catch (error) {
-        // Ignore connectivity errors on initial check; submit flow will surface them.
+        
     }
 };
 

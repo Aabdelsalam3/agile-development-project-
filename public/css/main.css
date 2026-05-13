@@ -328,10 +328,6 @@ a:hover {
     font-weight: 600;
 }
 
-/* =========================================
-   NEW CRUD ADDITIONS (Add to bottom of file)
-   ========================================= */
-
 /* Detail Header Layout Fix */
 .detail-header {
     display: flex;

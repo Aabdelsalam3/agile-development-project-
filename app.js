@@ -172,7 +172,7 @@ app.post("/api/appointments", requireAuth, (req, res) => {
         return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // Generate a current timestamp that matches your database format (e.g., "2026-05-11 17:38:47")
+    // Generate a current timestamp ex 2026-05-11 17:38:47
     const created_at = new Date().toISOString().replace('T', ' ').split('.')[0];
 
     // Added created_at to the SQL statement and the variables array
