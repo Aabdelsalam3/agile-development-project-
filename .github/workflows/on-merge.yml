@@ -1,0 +1,6 @@
+See on-merge.yml
+When the pull request is manually reviewed and merged into the protected main branch, run the
+‘on-merge’ job
+The job runs on an Ubuntu virtual machine and uses curl to trigger a deployment on render.com
+Your render instance will then pull the latest commit from the main branch and rebuild your app.
+See the next section on deployment for more detail
