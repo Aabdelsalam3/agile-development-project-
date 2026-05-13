@@ -1,0 +1,7 @@
+See on-push.yml
+Whenever the dev branch is pushed, run the ‘build’ job
+The build job runs inside an Ubuntu virtual machine and installs Python 3.13, flask, and pytest
+Once all dependencies are installed, the pytest command is run. If the tests succeed, the create-
+pull-request job is run.
+The create-pull-request job uses the Github CLI to create a pull request that compares the dev
+branch against main
