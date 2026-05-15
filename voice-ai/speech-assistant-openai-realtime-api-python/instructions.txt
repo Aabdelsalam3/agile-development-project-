@@ -1,0 +1,90 @@
+# AI Appointment Call Assistant
+
+This project uses **Twilio**, **OpenAI Realtime API**, **FastAPI**, and **ngrok** to create an AI phone assistant.
+
+The assistant answers incoming calls, asks the caller for their **first name**, **phone number**, **booking day**, and **booking time**, then confirms the details before saving them.
+
+## Tools Used
+
+- **OpenAI Realtime API**: Handles the AI voice conversation and caller transcription.
+- **Twilio Voice**: Receives the phone call and streams audio to the server.
+- **FastAPI**: Runs the Python web server.
+- **ngrok**: Gives the local server a public URL so Twilio can connect.
+
+## Files
+
+- `main.py`: Runs the AI phone assistant.
+- `merge.py`: Combines all call CSV files into one database CSV.
+- `call_logs/`: Stores call CSV files and transcripts.
+
+## Setup
+
+Create a `.env` file:
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+REQUIREMENTS
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Install requirements:
+
+    pip install fastapi uvicorn websockets python-dotenv twilio
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+RUNNING THE APPLICATION
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Running the App
+
+Start the server:
+
+    python main.py
+
+Start ngrok in another terminal:
+
+    ngrok http 5050
+
+Copy the ngrok URL and set your Twilio phone number webhook to:
+
+    https://your-ngrok-url.ngrok-free.dev/incoming-call
+
+Use POST as the method.
+
+What Happens During a Call
+    Caller calls the Twilio number.
+    Twilio connects the call to main.py.
+    The AI asks for:
+    first name
+    phone number
+    booking day
+    booking time
+    If the caller gives a time like “5,” the AI asks if it is AM or PM.
+    The AI confirms all details.
+    If the caller says yes, the app saves the call and ends it.
+    Output Files
+
+Each call creates:
+
+    call_logs/call1.csv
+    call_logs/call1_transcript.txt
+
+Example CSV:
+
+    name,phone_number,booking_day,booking_time
+    Nick,250-634-2795,Sunday,5 PM
+
+Merging CSV Files
+After making calls, run:
+
+    python merge.py
+
+This creates:
+
+    call_logs/appointments_db.csv
+
+Example merged database:
+
+    call_number,name,phone_number,booking_day,booking_time
+    1,Nick,250-634-2795,Sunday,5 PM
+    2,John,604-555-1234,Monday,3 PM
