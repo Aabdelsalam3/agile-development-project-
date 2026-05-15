@@ -213,3 +213,5 @@ app.get("/api/appointments", requireAuth, (req, res) => {
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
+
+// im testint the yml file for the first time, just to see if it works, and it does!
