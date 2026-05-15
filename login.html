@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <script src="https://kit.fontawesome.com/5c1bbe2411.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/login.css">
     <title>Login</title>
 </head>
 <body>
     <header class="site-header">
         <nav class="navbar">
-            <a href="index.html" class="logo"> LOGO</a>
+            <a href="/index.html" class="logo"> Barbershop bookings</a>
 
             <ul class="navlinks">
-                <li><a href="index.html">Home</a></li>
+                <li><a href="/index.html">Home</a></li>
                 <li><a href="#">About Us</a></li>
-                <li><a href="#">Login</a></li>
+                <li><a href="/login.html">Barbershop bookings</a></li>
                 <li><a href="#">Signup</a></li>
             </ul>
         </nav>
@@ -27,19 +27,20 @@
         <section class="login-box">
             <h1>Login</h1>
             <p>Welcome back! Login to your account</p>
-            <form>
+            <form id="login-form" novalidate>
                 <div class="email">
                     <label for="email"> Email</label>
-                    <input type="email" id="email"  name="email">
+                    <input type="email" id="email"  name="email" autocomplete="email" required>
                 </div>
                 <div>
                     <label for="password"> Password</label>
-                    <input type="password" id="password" name="password">
+                    <input type="password" id="password" name="password" autocomplete="current-password" required>
                 </div>
                 <div>
                     <button type="submit">Sign In</button>
                 </div>
             </form>
+            <p id="login-message" aria-live="polite"></p>
             <div class="login-links">
                 <p><a href="#">Forgot Password?</a></p>
                 <p>Do not have an account? <a href="#">Signup</a></p>
@@ -74,5 +75,7 @@
 
     </div>
 </footer>
+<script src="/js/login.js"></script>
 </body>
 </html>
+// testing the yml file for the first time, just to see if it works, and it does!
